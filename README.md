@@ -1,6 +1,6 @@
 # a9s - Terminal-UI for AWS
 
-**a9s** provides a terminal UI to interact with your AWS resources, inspired by [k9s](https://github.com/derailed/k9s) and .
+**a9s** provides a terminal UI to interact with your AWS resources, developed with **Go** and inspired by [k9s](https://github.com/derailed/k9s).
 
 ## Screenshots
 
@@ -11,6 +11,7 @@
 ## Features
 
 - Auto refresh
+- Easily select resources
 - Switch profile
 - Switch region
 
