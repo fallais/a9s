@@ -1,0 +1,17 @@
+version: 2
+
+builds:
+  - main: ./main.go
+    binary: a9s
+    goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: [ 'tar.gz', 'zip' ]
+    format_overrides:
+      - goos: windows
+        formats: [ 'zip' ]
