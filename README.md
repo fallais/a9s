@@ -28,7 +28,9 @@ sudo mv a9s /usr/local/bin/
 ### Windows
 
 Download latest archive from the [Release page](https://github.com/fallais/a9s/releases)
+
 Extract the binary into a specific folder
+
 Add the binary in your PATH
 
 ## Resources
@@ -40,3 +42,9 @@ Add the binary in your PATH
 - Lambda
 - RDS
 - S3
+- ECR
+- KMS
+- Secrets Manager
+- DynamoDB
+- Cloudfront
+- Cognito
