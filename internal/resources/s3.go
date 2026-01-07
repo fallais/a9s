@@ -7,6 +7,7 @@ import (
 	"a9s/internal/client"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // S3Bucket represents an S3 bucket
@@ -97,4 +98,38 @@ func (s *S3Buckets) GetID(index int) string {
 		return s.buckets[index].Name
 	}
 	return ""
+}
+
+// CreateBucket creates a new S3 bucket
+func (s *S3Buckets) CreateBucket(ctx context.Context, c *client.Client, bucketName string) error {
+	input := &s3.CreateBucketInput{
+		Bucket: &bucketName,
+	}
+
+	// For regions other than us-east-1, we need to specify the LocationConstraint
+	region := c.Region()
+	if region != "us-east-1" && region != "" {
+		input.CreateBucketConfiguration = &s3types.CreateBucketConfiguration{
+			LocationConstraint: s3types.BucketLocationConstraint(region),
+		}
+	}
+
+	_, err := c.S3().CreateBucket(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to create bucket %s: %w", bucketName, err)
+	}
+
+	return nil
+}
+
+// DeleteBucket deletes an S3 bucket
+func (s *S3Buckets) DeleteBucket(ctx context.Context, c *client.Client, bucketName string) error {
+	_, err := c.S3().DeleteBucket(ctx, &s3.DeleteBucketInput{
+		Bucket: &bucketName,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete bucket %s: %w", bucketName, err)
+	}
+
+	return nil
 }

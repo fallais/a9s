@@ -279,6 +279,14 @@ func (a *App) setupKeyBindings() {
 				// Restart EC2 instance
 				a.handleEC2Action("restart")
 				return nil
+			case 'c':
+				// Create S3 bucket
+				a.handleS3Create()
+				return nil
+			case 'd':
+				// Delete S3 bucket
+				a.handleS3Delete()
+				return nil
 			case 'p':
 				// Switch AWS profile
 				a.showProfileInput()
@@ -335,12 +343,15 @@ func (a *App) refreshResource() {
 			if a.autoRefresh {
 				autoStatus = "[green]auto:on"
 			}
-			ec2Help := ""
+			resourceHelp := ""
 			if _, ok := a.current.(*resources.EC2Instances); ok {
-				ec2Help = " | s: stop | S: start | R: restart"
+				resourceHelp = " | s: stop | S: start | R: restart"
+			}
+			if _, ok := a.current.(*resources.S3Buckets); ok {
+				resourceHelp = " | c: create | d: delete"
 			}
 			a.updateStatus(fmt.Sprintf("%s | [green]%s: %d items | [white]f: refresh | a: auto | p: profile | r: region | :: menu | q: quit%s",
-				autoStatus, a.current.Name(), len(rows), ec2Help))
+				autoStatus, a.current.Name(), len(rows), resourceHelp))
 		})
 	}()
 }
@@ -663,6 +674,166 @@ func (a *App) executeEC2Action(action, instanceID string, ec2Res *resources.EC2I
 			a.updateStatus(fmt.Sprintf("[green]Successfully initiated %s for %s", action, instanceID))
 			// Refresh to show updated state
 			time.Sleep(2 * time.Second)
+			a.refreshResource()
+		})
+	}()
+}
+
+// handleS3Create handles S3 bucket creation
+func (a *App) handleS3Create() {
+	// Check if we're viewing S3 buckets
+	_, ok := a.current.(*resources.S3Buckets)
+	if !ok {
+		a.updateStatus("[yellow]S3 create only available when viewing S3 buckets")
+		return
+	}
+
+	a.showS3CreateInput()
+}
+
+// showS3CreateInput displays an input dialog for creating an S3 bucket
+func (a *App) showS3CreateInput() {
+	input := tview.NewInputField().
+		SetLabel("Bucket Name: ").
+		SetFieldWidth(40).
+		SetFieldBackgroundColor(tcell.ColorDarkSlateGray)
+
+	input.SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEnter {
+			bucketName := input.GetText()
+			if bucketName != "" {
+				a.pages.RemovePage("s3create")
+				a.showS3CreateConfirm(bucketName)
+				return
+			}
+		}
+		a.pages.RemovePage("s3create")
+		a.pages.SwitchToPage("main")
+		a.app.SetFocus(a.table)
+	})
+
+	form := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(input, 1, 0, true)
+	form.SetBorder(true).SetTitle(" Create S3 Bucket (Enter to confirm, Esc to cancel) ")
+
+	modal := a.createModal(form, 60, 3)
+	a.pages.AddPage("s3create", modal, true, true)
+	a.app.SetFocus(input)
+}
+
+// showS3CreateConfirm displays a confirmation dialog for S3 bucket creation
+func (a *App) showS3CreateConfirm(bucketName string) {
+	modal := tview.NewModal().
+		SetText(fmt.Sprintf("Create bucket [green]%s[-] in region [yellow]%s[-]?", bucketName, a.client.Region())).
+		AddButtons([]string{"Yes", "No"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			a.pages.RemovePage("confirm")
+			a.pages.SwitchToPage("main")
+			a.app.SetFocus(a.table)
+
+			if buttonLabel == "Yes" {
+				a.executeS3Create(bucketName)
+			}
+		})
+
+	a.pages.AddPage("confirm", modal, true, true)
+	a.app.SetFocus(modal)
+}
+
+// executeS3Create executes the S3 bucket creation
+func (a *App) executeS3Create(bucketName string) {
+	s3Res, ok := a.current.(*resources.S3Buckets)
+	if !ok {
+		a.updateStatus("[red]S3 resource not available")
+		return
+	}
+
+	a.updateStatus(fmt.Sprintf("[yellow]Creating bucket %s...", bucketName))
+
+	go func() {
+		err := s3Res.CreateBucket(a.ctx, a.client, bucketName)
+
+		a.app.QueueUpdateDraw(func() {
+			if err != nil {
+				a.updateStatus(fmt.Sprintf("[red]Failed to create bucket: %v", err))
+				return
+			}
+
+			a.updateStatus(fmt.Sprintf("[green]Successfully created bucket %s", bucketName))
+			// Refresh to show the new bucket
+			time.Sleep(1 * time.Second)
+			a.refreshResource()
+		})
+	}()
+}
+
+// handleS3Delete handles S3 bucket deletion
+func (a *App) handleS3Delete() {
+	// Check if we're viewing S3 buckets
+	s3Res, ok := a.current.(*resources.S3Buckets)
+	if !ok {
+		a.updateStatus("[yellow]S3 delete only available when viewing S3 buckets")
+		return
+	}
+
+	// Get selected row (subtract 1 for header row)
+	row, _ := a.table.GetSelection()
+	if row <= 0 {
+		a.updateStatus("[yellow]Please select a bucket first")
+		return
+	}
+
+	bucketName := s3Res.GetID(row - 1)
+	if bucketName == "" {
+		a.updateStatus("[red]Could not get bucket name")
+		return
+	}
+
+	a.showS3DeleteConfirm(bucketName)
+}
+
+// showS3DeleteConfirm displays a confirmation dialog for S3 bucket deletion
+func (a *App) showS3DeleteConfirm(bucketName string) {
+	modal := tview.NewModal().
+		SetText(fmt.Sprintf("[red]Delete[-] bucket [white]%s[-]?\n\n[yellow]Warning: Bucket must be empty!", bucketName)).
+		AddButtons([]string{"Yes", "No"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			a.pages.RemovePage("confirm")
+			a.pages.SwitchToPage("main")
+			a.app.SetFocus(a.table)
+
+			if buttonLabel == "Yes" {
+				a.executeS3Delete(bucketName)
+			}
+		})
+
+	a.pages.AddPage("confirm", modal, true, true)
+	a.app.SetFocus(modal)
+}
+
+// executeS3Delete executes the S3 bucket deletion
+func (a *App) executeS3Delete(bucketName string) {
+	s3Res, ok := a.current.(*resources.S3Buckets)
+	if !ok {
+		a.updateStatus("[red]S3 resource not available")
+		return
+	}
+
+	a.updateStatus(fmt.Sprintf("[yellow]Deleting bucket %s...", bucketName))
+
+	go func() {
+		err := s3Res.DeleteBucket(a.ctx, a.client, bucketName)
+
+		a.app.QueueUpdateDraw(func() {
+			if err != nil {
+				a.updateStatus(fmt.Sprintf("[red]Failed to delete bucket: %v", err))
+				return
+			}
+
+			a.updateStatus(fmt.Sprintf("[green]Successfully deleted bucket %s", bucketName))
+			// Refresh to update the list
+			time.Sleep(1 * time.Second)
 			a.refreshResource()
 		})
 	}()
