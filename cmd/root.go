@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"a9s/internal"
+	"a9s/internal/cmd/root"
 	"a9s/pkg/log"
 
 	"github.com/spf13/cobra"
@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 	Use:   "a9s",
 	Short: "A k9s-like terminal UI for AWS resources",
 	Long:  `a9s is a terminal user interface for browsing and managing AWS resources, inspired by k9s for Kubernetes.`,
-	Run:   internal.Run,
+	Run:   root.Run,
 }
 
 func init() {
