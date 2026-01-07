@@ -287,6 +287,10 @@ func (a *App) setupKeyBindings() {
 				// Delete S3 bucket
 				a.handleS3Delete()
 				return nil
+			case 'e':
+				// Empty S3 bucket
+				a.handleS3Empty()
+				return nil
 			case 'p':
 				// Switch AWS profile
 				a.showProfileInput()
@@ -348,7 +352,7 @@ func (a *App) refreshResource() {
 				resourceHelp = " | s: stop | S: start | R: restart"
 			}
 			if _, ok := a.current.(*resources.S3Buckets); ok {
-				resourceHelp = " | c: create | d: delete"
+				resourceHelp = " | c: create | d: delete | e: empty"
 			}
 			a.updateStatus(fmt.Sprintf("%s | [green]%s: %d items | [white]f: refresh | a: auto | p: profile | r: region | :: menu | q: quit%s",
 				autoStatus, a.current.Name(), len(rows), resourceHelp))
@@ -835,6 +839,74 @@ func (a *App) executeS3Delete(bucketName string) {
 			// Refresh to update the list
 			time.Sleep(1 * time.Second)
 			a.refreshResource()
+		})
+	}()
+}
+
+// handleS3Empty handles S3 bucket emptying
+func (a *App) handleS3Empty() {
+	// Check if we're viewing S3 buckets
+	s3Res, ok := a.current.(*resources.S3Buckets)
+	if !ok {
+		a.updateStatus("[yellow]S3 empty only available when viewing S3 buckets")
+		return
+	}
+
+	// Get selected row (subtract 1 for header row)
+	row, _ := a.table.GetSelection()
+	if row <= 0 {
+		a.updateStatus("[yellow]Please select a bucket first")
+		return
+	}
+
+	bucketName := s3Res.GetID(row - 1)
+	if bucketName == "" {
+		a.updateStatus("[red]Could not get bucket name")
+		return
+	}
+
+	a.showS3EmptyConfirm(bucketName)
+}
+
+// showS3EmptyConfirm displays a confirmation dialog for S3 bucket emptying
+func (a *App) showS3EmptyConfirm(bucketName string) {
+	modal := tview.NewModal().
+		SetText(fmt.Sprintf("[red]Empty[-] bucket [white]%s[-]?\n\n[yellow]WARNING: This will permanently delete ALL objects!\nThis action cannot be undone!", bucketName)).
+		AddButtons([]string{"Yes", "No"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			a.pages.RemovePage("confirm")
+			a.pages.SwitchToPage("main")
+			a.app.SetFocus(a.table)
+
+			if buttonLabel == "Yes" {
+				a.executeS3Empty(bucketName)
+			}
+		})
+
+	a.pages.AddPage("confirm", modal, true, true)
+	a.app.SetFocus(modal)
+}
+
+// executeS3Empty executes the S3 bucket emptying
+func (a *App) executeS3Empty(bucketName string) {
+	s3Res, ok := a.current.(*resources.S3Buckets)
+	if !ok {
+		a.updateStatus("[red]S3 resource not available")
+		return
+	}
+
+	a.updateStatus(fmt.Sprintf("[yellow]Emptying bucket %s... (this may take a while)", bucketName))
+
+	go func() {
+		err := s3Res.EmptyBucket(a.ctx, a.client, bucketName)
+
+		a.app.QueueUpdateDraw(func() {
+			if err != nil {
+				a.updateStatus(fmt.Sprintf("[red]Failed to empty bucket: %v", err))
+				return
+			}
+
+			a.updateStatus(fmt.Sprintf("[green]Successfully emptied bucket %s", bucketName))
 		})
 	}()
 }

@@ -133,3 +133,140 @@ func (s *S3Buckets) DeleteBucket(ctx context.Context, c *client.Client, bucketNa
 
 	return nil
 }
+
+// EmptyBucket deletes all objects (including versions) from an S3 bucket
+func (s *S3Buckets) EmptyBucket(ctx context.Context, c *client.Client, bucketName string) error {
+	// Delete all object versions (handles versioned buckets)
+	if err := s.deleteAllVersions(ctx, c, bucketName); err != nil {
+		return err
+	}
+
+	// Delete remaining objects (for non-versioned buckets)
+	if err := s.deleteAllObjects(ctx, c, bucketName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// deleteAllVersions deletes all object versions and delete markers
+func (s *S3Buckets) deleteAllVersions(ctx context.Context, c *client.Client, bucketName string) error {
+	var keyMarker *string
+	var versionIDMarker *string
+
+	for {
+		listOutput, err := c.S3().ListObjectVersions(ctx, &s3.ListObjectVersionsInput{
+			Bucket:          &bucketName,
+			KeyMarker:       keyMarker,
+			VersionIdMarker: versionIDMarker,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to list object versions: %w", err)
+		}
+
+		// Collect objects to delete
+		var objectsToDelete []s3types.ObjectIdentifier
+
+		for _, version := range listOutput.Versions {
+			objectsToDelete = append(objectsToDelete, s3types.ObjectIdentifier{
+				Key:       version.Key,
+				VersionId: version.VersionId,
+			})
+		}
+
+		for _, marker := range listOutput.DeleteMarkers {
+			objectsToDelete = append(objectsToDelete, s3types.ObjectIdentifier{
+				Key:       marker.Key,
+				VersionId: marker.VersionId,
+			})
+		}
+
+		// Delete objects in batches of 1000
+		if len(objectsToDelete) > 0 {
+			if err := s.deleteBatch(ctx, c, bucketName, objectsToDelete); err != nil {
+				return err
+			}
+		}
+
+		// Check if there are more versions to process
+		if listOutput.IsTruncated == nil || !*listOutput.IsTruncated {
+			break
+		}
+		keyMarker = listOutput.NextKeyMarker
+		versionIDMarker = listOutput.NextVersionIdMarker
+	}
+
+	return nil
+}
+
+// deleteAllObjects deletes all objects (for non-versioned buckets)
+func (s *S3Buckets) deleteAllObjects(ctx context.Context, c *client.Client, bucketName string) error {
+	var continuationToken *string
+
+	for {
+		listOutput, err := c.S3().ListObjectsV2(ctx, &s3.ListObjectsV2Input{
+			Bucket:            &bucketName,
+			ContinuationToken: continuationToken,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to list objects: %w", err)
+		}
+
+		if len(listOutput.Contents) == 0 {
+			break
+		}
+
+		// Collect objects to delete
+		var objectsToDelete []s3types.ObjectIdentifier
+		for _, obj := range listOutput.Contents {
+			objectsToDelete = append(objectsToDelete, s3types.ObjectIdentifier{
+				Key: obj.Key,
+			})
+		}
+
+		// Delete the batch
+		if err := s.deleteBatch(ctx, c, bucketName, objectsToDelete); err != nil {
+			return err
+		}
+
+		// Check if there are more objects to process
+		if listOutput.IsTruncated == nil || !*listOutput.IsTruncated {
+			break
+		}
+		continuationToken = listOutput.NextContinuationToken
+	}
+
+	return nil
+}
+
+// deleteBatch deletes a batch of objects (max 1000 per call)
+func (s *S3Buckets) deleteBatch(ctx context.Context, c *client.Client, bucketName string, objects []s3types.ObjectIdentifier) error {
+	// S3 DeleteObjects supports max 1000 objects per request
+	const maxBatchSize = 1000
+
+	for i := 0; i < len(objects); i += maxBatchSize {
+		end := i + maxBatchSize
+		if end > len(objects) {
+			end = len(objects)
+		}
+
+		batch := objects[i:end]
+		_, err := c.S3().DeleteObjects(ctx, &s3.DeleteObjectsInput{
+			Bucket: &bucketName,
+			Delete: &s3types.Delete{
+				Objects: batch,
+				Quiet:   boolPtr(true),
+			},
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete objects: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// boolPtr returns a pointer to a bool
+func boolPtr(b bool) *bool {
+	return &b
+}
