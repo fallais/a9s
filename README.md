@@ -14,6 +14,7 @@
 - Easily select resources
 - Switch profile
 - Switch region
+- S3 : Create, delete and drop (empty) buckets
 
 ## Installation
 
