@@ -7,6 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
+	"github.com/aws/aws-sdk-go-v2/service/apigateway"
+	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
@@ -15,12 +17,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
+	"github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
+	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
+	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 )
 
 // Client wraps AWS SDK clients for various services
@@ -41,6 +48,13 @@ type Client struct {
 	kmsClient            *kms.Client
 	ecrClient            *ecr.Client
 	cognitoClient        *cognitoidentityprovider.Client
+	iamClient            *iam.Client
+	sqsClient            *sqs.Client
+	snsClient            *sns.Client
+	apiGatewayClient     *apigateway.Client
+	apiGatewayV2Client   *apigatewayv2.Client
+	elasticacheClient    *elasticache.Client
+	route53Client        *route53.Client
 	region               string
 	profile              string
 }
@@ -75,6 +89,13 @@ func New(ctx context.Context) (*Client, error) {
 		kmsClient:            kms.NewFromConfig(cfg),
 		ecrClient:            ecr.NewFromConfig(cfg),
 		cognitoClient:        cognitoidentityprovider.NewFromConfig(cfg),
+		iamClient:            iam.NewFromConfig(cfg),
+		sqsClient:            sqs.NewFromConfig(cfg),
+		snsClient:            sns.NewFromConfig(cfg),
+		apiGatewayClient:     apigateway.NewFromConfig(cfg),
+		apiGatewayV2Client:   apigatewayv2.NewFromConfig(cfg),
+		elasticacheClient:    elasticache.NewFromConfig(cfg),
+		route53Client:        route53.NewFromConfig(cfg),
 		region:               cfg.Region,
 		profile:              profile,
 	}, nil
@@ -110,6 +131,13 @@ func NewWithRegion(ctx context.Context, region string) (*Client, error) {
 		kmsClient:            kms.NewFromConfig(cfg),
 		ecrClient:            ecr.NewFromConfig(cfg),
 		cognitoClient:        cognitoidentityprovider.NewFromConfig(cfg),
+		iamClient:            iam.NewFromConfig(cfg),
+		sqsClient:            sqs.NewFromConfig(cfg),
+		snsClient:            sns.NewFromConfig(cfg),
+		apiGatewayClient:     apigateway.NewFromConfig(cfg),
+		apiGatewayV2Client:   apigatewayv2.NewFromConfig(cfg),
+		elasticacheClient:    elasticache.NewFromConfig(cfg),
+		route53Client:        route53.NewFromConfig(cfg),
 		region:               region,
 		profile:              profile,
 	}, nil
@@ -153,6 +181,13 @@ func (c *Client) SetRegion(ctx context.Context, region string) error {
 	c.kmsClient = kms.NewFromConfig(cfg)
 	c.ecrClient = ecr.NewFromConfig(cfg)
 	c.cognitoClient = cognitoidentityprovider.NewFromConfig(cfg)
+	c.iamClient = iam.NewFromConfig(cfg)
+	c.sqsClient = sqs.NewFromConfig(cfg)
+	c.snsClient = sns.NewFromConfig(cfg)
+	c.apiGatewayClient = apigateway.NewFromConfig(cfg)
+	c.apiGatewayV2Client = apigatewayv2.NewFromConfig(cfg)
+	c.elasticacheClient = elasticache.NewFromConfig(cfg)
+	c.route53Client = route53.NewFromConfig(cfg)
 	c.region = region
 	return nil
 }
@@ -185,6 +220,13 @@ func (c *Client) SetProfile(ctx context.Context, profile string) error {
 	c.kmsClient = kms.NewFromConfig(cfg)
 	c.ecrClient = ecr.NewFromConfig(cfg)
 	c.cognitoClient = cognitoidentityprovider.NewFromConfig(cfg)
+	c.iamClient = iam.NewFromConfig(cfg)
+	c.sqsClient = sqs.NewFromConfig(cfg)
+	c.snsClient = sns.NewFromConfig(cfg)
+	c.apiGatewayClient = apigateway.NewFromConfig(cfg)
+	c.apiGatewayV2Client = apigatewayv2.NewFromConfig(cfg)
+	c.elasticacheClient = elasticache.NewFromConfig(cfg)
+	c.route53Client = route53.NewFromConfig(cfg)
 	c.profile = profile
 	return nil
 }
@@ -262,4 +304,39 @@ func (c *Client) ECR() *ecr.Client {
 // Cognito returns the Cognito Identity Provider client
 func (c *Client) Cognito() *cognitoidentityprovider.Client {
 	return c.cognitoClient
+}
+
+// IAM returns the IAM client
+func (c *Client) IAM() *iam.Client {
+	return c.iamClient
+}
+
+// SQS returns the SQS client
+func (c *Client) SQS() *sqs.Client {
+	return c.sqsClient
+}
+
+// SNS returns the SNS client
+func (c *Client) SNS() *sns.Client {
+	return c.snsClient
+}
+
+// APIGateway returns the API Gateway client
+func (c *Client) APIGateway() *apigateway.Client {
+	return c.apiGatewayClient
+}
+
+// APIGatewayV2 returns the API Gateway V2 client
+func (c *Client) APIGatewayV2() *apigatewayv2.Client {
+	return c.apiGatewayV2Client
+}
+
+// ElastiCache returns the ElastiCache client
+func (c *Client) ElastiCache() *elasticache.Client {
+	return c.elasticacheClient
+}
+
+// Route53 returns the Route53 client
+func (c *Client) Route53() *route53.Client {
+	return c.route53Client
 }

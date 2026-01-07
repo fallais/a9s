@@ -162,11 +162,3 @@ func (e *EC2Instances) RestartInstance(ctx context.Context, c *client.Client, in
 	}
 	return nil
 }
-
-// stringValue safely dereferences a string pointer
-func stringValue(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

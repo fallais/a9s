@@ -100,11 +100,3 @@ func (l *LambdaFunctions) GetID(index int) string {
 	}
 	return ""
 }
-
-// ptrInt32Value safely dereferences an int32 pointer
-func ptrInt32Value(i *int32) int32 {
-	if i == nil {
-		return 0
-	}
-	return *i
-}

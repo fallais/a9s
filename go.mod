@@ -6,6 +6,8 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.41.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.6
 	github.com/aws/aws-sdk-go-v2/service/acm v1.37.18
+	github.com/aws/aws-sdk-go-v2/service/apigateway v1.38.3
+	github.com/aws/aws-sdk-go-v2/service/apigatewayv2 v1.33.4
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.58.3
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.57.17
 	github.com/aws/aws-sdk-go-v2/service/costexplorer v1.62.0
@@ -14,12 +16,17 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.55.0
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.70.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.76.3
+	github.com/aws/aws-sdk-go-v2/service/elasticache v1.51.8
 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.5
+	github.com/aws/aws-sdk-go-v2/service/iam v1.53.1
 	github.com/aws/aws-sdk-go-v2/service/kms v1.49.4
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.87.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.113.1
+	github.com/aws/aws-sdk-go-v2/service/route53 v1.62.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.95.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.41.0
+	github.com/aws/aws-sdk-go-v2/service/sns v1.39.10
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.20
 	github.com/gdamore/tcell/v2 v2.13.5
 	github.com/rivo/tview v0.42.0
 	github.com/spf13/cobra v1.10.2

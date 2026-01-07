@@ -80,5 +80,18 @@ func DefaultRegistry() *Registry {
 	reg.Register("kms", NewKMSKeys())
 	reg.Register("ecr", NewECRRepositories())
 	reg.Register("cognito", NewCognitoUserPools())
+	reg.Register("iam-users", NewIAMUsers())
+	reg.Register("iam-roles", NewIAMRoles())
+	reg.Register("iam-policies", NewIAMPolicies())
+	reg.Register("vpc", NewVPCs())
+	reg.Register("subnets", NewSubnets())
+	reg.Register("security-groups", NewSecurityGroups())
+	reg.Register("sqs", NewSQSQueues())
+	reg.Register("sns", NewSNSTopics())
+	reg.Register("api-gateway", NewRestAPIs())
+	reg.Register("api-gateway-v2", NewHttpAPIs())
+	reg.Register("elasticache-clusters", NewElastiCacheClusters())
+	reg.Register("elasticache-groups", NewElastiCacheReplicationGroups())
+	reg.Register("route53", NewHostedZones())
 	return reg
 }
