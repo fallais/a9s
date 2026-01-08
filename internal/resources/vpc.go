@@ -104,6 +104,11 @@ func (v *VPCs) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for VPCs
+func (v *VPCs) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // Subnet represents a subnet
 type Subnet struct {
 	SubnetID         string
@@ -198,6 +203,11 @@ func (s *Subnets) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for subnets
+func (s *Subnets) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // SecurityGroup represents a security group
 type SecurityGroup struct {
 	GroupID     string
@@ -274,4 +284,9 @@ func (s *SecurityGroups) GetID(index int) string {
 		return s.groups[index].GroupID
 	}
 	return ""
+}
+
+// QuickActions returns the available quick actions for security groups
+func (s *SecurityGroups) QuickActions() []QuickAction {
+	return []QuickAction{}
 }

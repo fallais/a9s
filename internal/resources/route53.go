@@ -112,3 +112,8 @@ func (h *HostedZones) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for Route53 hosted zones
+func (h *HostedZones) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

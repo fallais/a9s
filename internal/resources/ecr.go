@@ -122,3 +122,8 @@ func (e *ECRRepositories) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for ECR repositories
+func (e *ECRRepositories) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

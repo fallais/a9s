@@ -130,3 +130,8 @@ func (c *CloudFrontDistributions) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for CloudFront distributions
+func (c *CloudFrontDistributions) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

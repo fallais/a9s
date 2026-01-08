@@ -132,3 +132,8 @@ func (k *KMSKeys) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for KMS keys
+func (k *KMSKeys) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

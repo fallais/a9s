@@ -103,6 +103,11 @@ func (e *ElastiCacheClusters) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for ElastiCache clusters
+func (e *ElastiCacheClusters) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // ElastiCacheReplicationGroup represents an ElastiCache replication group
 type ElastiCacheReplicationGroup struct {
 	ReplicationGroupID string
@@ -207,4 +212,9 @@ func (e *ElastiCacheReplicationGroups) GetID(index int) string {
 		return e.groups[index].ReplicationGroupID
 	}
 	return ""
+}
+
+// QuickActions returns the available quick actions for ElastiCache replication groups
+func (e *ElastiCacheReplicationGroups) QuickActions() []QuickAction {
+	return []QuickAction{}
 }

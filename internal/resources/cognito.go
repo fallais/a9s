@@ -120,3 +120,8 @@ func (c *CognitoUserPools) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for Cognito user pools
+func (c *CognitoUserPools) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

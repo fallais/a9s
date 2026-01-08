@@ -100,6 +100,39 @@ func (s *S3Buckets) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for S3 buckets
+func (s *S3Buckets) QuickActions() []QuickAction {
+	return []QuickAction{
+		{
+			Key:             'c',
+			Label:           "create",
+			Description:     "Create bucket",
+			NeedsSelection:  false,
+			NeedsConfirm:    false, // Will be handled by input dialog
+			ConfirmTemplate: "",
+			Handler:         nil, // Special handling required for input
+		},
+		{
+			Key:             'd',
+			Label:           "delete",
+			Description:     "Delete bucket",
+			NeedsSelection:  true,
+			NeedsConfirm:    true,
+			ConfirmTemplate: "[red]Delete[-] bucket [white]%s[-]?\n\n[yellow]Warning: Bucket must be empty!",
+			Handler:         s.DeleteBucket,
+		},
+		{
+			Key:             'e',
+			Label:           "empty",
+			Description:     "Empty bucket",
+			NeedsSelection:  true,
+			NeedsConfirm:    true,
+			ConfirmTemplate: "[red]Empty[-] bucket [white]%s[-]?\n\n[yellow]WARNING: This will permanently delete ALL objects!\nThis action cannot be undone!",
+			Handler:         s.EmptyBucket,
+		},
+	}
+}
+
 // CreateBucket creates a new S3 bucket
 func (s *S3Buckets) CreateBucket(ctx context.Context, c *client.Client, bucketName string) error {
 	input := &s3.CreateBucketInput{

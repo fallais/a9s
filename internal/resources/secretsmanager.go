@@ -115,3 +115,8 @@ func (s *Secrets) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for secrets
+func (s *Secrets) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

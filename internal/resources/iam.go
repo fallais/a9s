@@ -97,6 +97,11 @@ func (i *IAMUsers) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for IAM users
+func (i *IAMUsers) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // IAMRole represents an IAM role
 type IAMRole struct {
 	RoleName   string
@@ -182,6 +187,11 @@ func (i *IAMRoles) GetID(index int) string {
 		return i.roles[index].RoleName
 	}
 	return ""
+}
+
+// QuickActions returns the available quick actions for IAM roles
+func (i *IAMRoles) QuickActions() []QuickAction {
+	return []QuickAction{}
 }
 
 // IAMPolicy represents an IAM policy
@@ -281,4 +291,9 @@ func (i *IAMPolicies) GetID(index int) string {
 		return i.policies[index].ARN
 	}
 	return ""
+}
+
+// QuickActions returns the available quick actions for IAM policies
+func (i *IAMPolicies) QuickActions() []QuickAction {
+	return []QuickAction{}
 }

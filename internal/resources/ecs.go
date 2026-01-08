@@ -107,3 +107,8 @@ func (e *ECSClusters) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for ECS clusters
+func (e *ECSClusters) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

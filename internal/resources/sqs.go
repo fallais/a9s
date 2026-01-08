@@ -128,3 +128,8 @@ func (s *SQSQueues) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for SQS queues
+func (s *SQSQueues) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

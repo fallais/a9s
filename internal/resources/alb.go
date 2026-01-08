@@ -124,3 +124,8 @@ func (a *ALBs) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for ALBs
+func (a *ALBs) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

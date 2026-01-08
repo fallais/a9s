@@ -115,3 +115,8 @@ func (e *EKSClusters) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for EKS clusters
+func (e *EKSClusters) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

@@ -126,6 +126,11 @@ func (a *ACMCertificates) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for ACM certificates
+func (a *ACMCertificates) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // formatCertType formats the certificate type for display
 func formatCertType(certType string) string {
 	switch certType {

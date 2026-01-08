@@ -130,6 +130,39 @@ func (e *EC2Instances) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for EC2 instances
+func (e *EC2Instances) QuickActions() []QuickAction {
+	return []QuickAction{
+		{
+			Key:             's',
+			Label:           "stop",
+			Description:     "Stop instance",
+			NeedsSelection:  true,
+			NeedsConfirm:    true,
+			ConfirmTemplate: "[red]stop[-] instance [white]%s[-]?",
+			Handler:         e.StopInstance,
+		},
+		{
+			Key:             'S',
+			Label:           "start",
+			Description:     "Start instance",
+			NeedsSelection:  true,
+			NeedsConfirm:    true,
+			ConfirmTemplate: "[green]start[-] instance [white]%s[-]?",
+			Handler:         e.StartInstance,
+		},
+		{
+			Key:             'R',
+			Label:           "restart",
+			Description:     "Restart instance",
+			NeedsSelection:  true,
+			NeedsConfirm:    true,
+			ConfirmTemplate: "[yellow]restart[-] instance [white]%s[-]?",
+			Handler:         e.RestartInstance,
+		},
+	}
+}
+
 // StopInstance stops an EC2 instance
 func (e *EC2Instances) StopInstance(ctx context.Context, c *client.Client, instanceID string) error {
 	_, err := c.EC2().StopInstances(ctx, &ec2.StopInstancesInput{

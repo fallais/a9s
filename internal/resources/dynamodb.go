@@ -151,3 +151,8 @@ func (d *DynamoDBTables) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for DynamoDB tables
+func (d *DynamoDBTables) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

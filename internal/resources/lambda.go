@@ -100,3 +100,8 @@ func (l *LambdaFunctions) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for Lambda functions
+func (l *LambdaFunctions) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

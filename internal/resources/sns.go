@@ -121,3 +121,8 @@ func (s *SNSTopics) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for SNS topics
+func (s *SNSTopics) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

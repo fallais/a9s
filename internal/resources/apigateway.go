@@ -101,6 +101,11 @@ func (r *RestAPIs) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for REST APIs
+func (r *RestAPIs) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // HttpAPI represents an HTTP API Gateway (v2)
 type HttpAPI struct {
 	ID           string
@@ -199,4 +204,9 @@ func (h *HttpAPIs) GetID(index int) string {
 		return h.apis[index].ID
 	}
 	return ""
+}
+
+// QuickActions returns the available quick actions for HTTP APIs
+func (h *HttpAPIs) QuickActions() []QuickAction {
+	return []QuickAction{}
 }

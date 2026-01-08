@@ -187,3 +187,8 @@ func (b *Billing) GetID(index int) string {
 	}
 	return ""
 }
+
+// QuickActions returns the available quick actions for billing
+func (b *Billing) QuickActions() []QuickAction {
+	return []QuickAction{}
+}

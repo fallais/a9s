@@ -116,6 +116,11 @@ func (r *RDSInstances) GetID(index int) string {
 	return ""
 }
 
+// QuickActions returns the available quick actions for RDS instances
+func (r *RDSInstances) QuickActions() []QuickAction {
+	return []QuickAction{}
+}
+
 // ptrBoolValue safely dereferences a bool pointer
 func ptrBoolValue(b *bool) bool {
 	if b == nil {

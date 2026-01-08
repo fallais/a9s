@@ -12,6 +12,17 @@ type Column struct {
 	Width int
 }
 
+// QuickAction represents a user-triggered action on a resource
+type QuickAction struct {
+	Key             rune   // Key to trigger the action (e.g., 's', 'c', 'd')
+	Label           string // Short label (e.g., "stop", "create")
+	Description     string // Full description (e.g., "Stop instance")
+	NeedsSelection  bool   // Whether this action requires a row to be selected
+	NeedsConfirm    bool   // Whether to show a confirmation dialog
+	ConfirmTemplate string // Template for confirmation message, use %s for ID
+	Handler         func(ctx context.Context, client *client.Client, selectedID string) error
+}
+
 // Resource defines the interface for all AWS resources
 type Resource interface {
 	// Name returns the display name of the resource type
@@ -28,6 +39,9 @@ type Resource interface {
 
 	// GetID returns the ID of the resource at the given index
 	GetID(index int) string
+
+	// QuickActions returns the available quick actions for this resource
+	QuickActions() []QuickAction
 }
 
 // Registry holds all available resource types
