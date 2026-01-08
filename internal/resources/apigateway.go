@@ -103,10 +103,10 @@ func (r *RestAPIs) GetID(index int) string {
 
 // HttpAPI represents an HTTP API Gateway (v2)
 type HttpAPI struct {
-	ID          string
-	Name        string
-	Description string
-	CreatedDate string
+	ID           string
+	Name         string
+	Description  string
+	CreatedDate  string
 	ProtocolType string
 }
 
@@ -161,10 +161,10 @@ func (h *HttpAPIs) Fetch(ctx context.Context, c *client.Client) error {
 			}
 
 			h.apis = append(h.apis, HttpAPI{
-				ID:          stringValue(api.ApiId),
-				Name:        stringValue(api.Name),
-				Description: stringValue(api.Description),
-				CreatedDate: createdDate,
+				ID:           stringValue(api.ApiId),
+				Name:         stringValue(api.Name),
+				Description:  stringValue(api.Description),
+				CreatedDate:  createdDate,
 				ProtocolType: string(api.ProtocolType),
 			})
 		}

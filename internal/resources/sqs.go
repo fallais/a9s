@@ -12,11 +12,11 @@ import (
 
 // SQSQueue represents an SQS queue
 type SQSQueue struct {
-	URL                          string
-	Name                         string
-	ApproximateMessages          string
+	URL                           string
+	Name                          string
+	ApproximateMessages           string
 	ApproximateMessagesNotVisible string
-	MessageRetentionPeriod       string
+	MessageRetentionPeriod        string
 }
 
 // SQSQueues implements Resource for SQS queues
@@ -77,7 +77,7 @@ func (s *SQSQueues) Fetch(ctx context.Context, c *client.Client) error {
 
 			// Extract queue name from URL
 			// URL format: https://sqs.region.amazonaws.com/account-id/queue-name
-		for i := len(url) - 1; i >= 0; i-- {
+			for i := len(url) - 1; i >= 0; i-- {
 				if url[i] == '/' {
 					queue.Name = url[i+1:]
 					break

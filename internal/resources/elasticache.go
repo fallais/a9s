@@ -11,13 +11,13 @@ import (
 
 // ElastiCacheCluster represents an ElastiCache cluster
 type ElastiCacheCluster struct {
-	ClusterID            string
-	Engine               string
-	EngineVersion        string
-	CacheNodeType        string
-	NumCacheNodes        string
-	Status               string
-	PreferredAZ          string
+	ClusterID     string
+	Engine        string
+	EngineVersion string
+	CacheNodeType string
+	NumCacheNodes string
+	Status        string
+	PreferredAZ   string
 }
 
 // ElastiCacheClusters implements Resource for ElastiCache clusters

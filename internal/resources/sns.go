@@ -12,11 +12,11 @@ import (
 
 // SNSTopic represents an SNS topic
 type SNSTopic struct {
-	ARN              string
-	Name             string
-	SubscriptionsPending string
+	ARN                    string
+	Name                   string
+	SubscriptionsPending   string
 	SubscriptionsConfirmed string
-	SubscriptionsDeleted string
+	SubscriptionsDeleted   string
 }
 
 // SNSTopics implements Resource for SNS topics
@@ -61,7 +61,7 @@ func (s *SNSTopics) Fetch(ctx context.Context, c *client.Client) error {
 
 		for _, topic := range output.Topics {
 			arn := stringValue(topic.TopicArn)
-			
+
 			// Extract topic name from ARN
 			// ARN format: arn:aws:sns:region:account-id:topic-name
 			name := arn

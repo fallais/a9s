@@ -186,11 +186,11 @@ func (i *IAMRoles) GetID(index int) string {
 
 // IAMPolicy represents an IAM policy
 type IAMPolicy struct {
-	PolicyName        string
-	PolicyID          string
-	ARN               string
-	AttachmentCount   string
-	CreateDate        string
+	PolicyName      string
+	PolicyID        string
+	ARN             string
+	AttachmentCount string
+	CreateDate      string
 }
 
 // IAMPolicies implements Resource for IAM policies

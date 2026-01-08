@@ -11,11 +11,11 @@ import (
 
 // VPC represents a VPC
 type VPC struct {
-	VpcID      string
-	CIDRBlock  string
-	State      string
-	IsDefault  string
-	Name       string
+	VpcID     string
+	CIDRBlock string
+	State     string
+	IsDefault string
+	Name      string
 }
 
 // VPCs implements Resource for VPCs

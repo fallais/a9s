@@ -12,11 +12,11 @@ import (
 
 // HostedZone represents a Route53 hosted zone
 type HostedZone struct {
-	ID              string
-	Name            string
-	Type            string
-	RecordSetCount  string
-	Comment         string
+	ID             string
+	Name           string
+	Type           string
+	RecordSetCount string
+	Comment        string
 }
 
 // HostedZones implements Resource for Route53 hosted zones
