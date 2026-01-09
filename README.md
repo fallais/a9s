@@ -1,5 +1,7 @@
 # a9s - Terminal-UI for AWS
 
+[![License](https://img.shields.io/:license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/fallais/a9s) [![github actions](https://github.com/fallais/a9s/actions/workflows/release.yaml/badge.svg)](https://github.com/fallais/a9s/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/fallais/a9s)](https://goreportcard.com/report/github.com/fallais/a9s) [![Coverage Status](https://coveralls.io/repos/github/fallais/a9s/badge.svg?branch=main)](https://coveralls.io/github/fallais/a9s?branch=main)
+
 **a9s** provides a terminal UI to interact with your AWS resources, developed with **Go** and inspired by [k9s](https://github.com/derailed/k9s).
 
 ## Screenshots
